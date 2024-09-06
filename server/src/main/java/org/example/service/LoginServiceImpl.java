@@ -12,7 +12,7 @@ public class LoginServiceImpl extends LoginServiceGrpc.LoginServiceImplBase {
         System.out.println("Request received from client:\n" + request);
 
         LoginResponse response = LoginResponse.newBuilder()
-                .setResult(request.getLogin().equals("test") && request.getPassword().equals("good"))
+                .setSessionId("sessionId")
                 .build();
 
         responseObserver.onNext(response);

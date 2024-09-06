@@ -8,7 +8,7 @@ message LoginRequest {
 }
 
 message LoginResponse {
-  bool result = 1;
+  string sessionId = 1;
 }
 
 service LoginService {
