@@ -1,0 +1,36 @@
+package org.example.service;
+
+import io.grpc.stub.StreamObserver;
+import org.example.data.model.User;
+import org.example.data.repository.UserRepository;
+import org.example.grpc.SignUpRequest;
+import org.example.grpc.SignUpResponse;
+import org.example.grpc.SignUpServiceGrpc;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+
+@Controller
+public class SignUpServiceImpl extends SignUpServiceGrpc.SignUpServiceImplBase {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Override
+    public void signUp(SignUpRequest request, StreamObserver<SignUpResponse> responseObserver) {
+        System.out.println("Request received from client:\n" + request);
+
+        SignUpResponse.Builder responseBuilder = SignUpResponse.newBuilder();
+        try {
+            User user = new User();
+            user.setLogin(request.getLogin());
+            user.setPassword(request.getPassword());
+            user.setRole(request.getRole());
+            userRepository.save(user);
+        } catch (Exception e) {
+            responseBuilder.setErrorMsg(e.getMessage());
+        }
+
+        responseObserver.onNext(responseBuilder.build());
+        responseObserver.onCompleted();
+    }
+}

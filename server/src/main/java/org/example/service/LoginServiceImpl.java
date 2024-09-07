@@ -4,7 +4,9 @@ import io.grpc.stub.StreamObserver;
 import org.example.grpc.LoginRequest;
 import org.example.grpc.LoginResponse;
 import org.example.grpc.LoginServiceGrpc;
+import org.springframework.stereotype.Controller;
 
+@Controller
 public class LoginServiceImpl extends LoginServiceGrpc.LoginServiceImplBase {
 
     @Override

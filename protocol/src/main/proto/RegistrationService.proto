@@ -1,0 +1,22 @@
+syntax = "proto3";
+option java_multiple_files = true;
+package org.example.grpc;
+
+enum Role {
+  SELLER = 0;
+  CUSTOMER = 1;
+}
+
+message SignUpRequest {
+  Role role = 1;
+  string login = 2;
+  string password = 3;
+}
+
+message SignUpResponse {
+  string errorMsg = 1;
+}
+
+service SignUpService {
+  rpc signUp(SignUpRequest) returns (SignUpResponse);
+}

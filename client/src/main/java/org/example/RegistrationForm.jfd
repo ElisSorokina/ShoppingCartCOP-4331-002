@@ -9,66 +9,77 @@ new FormModel {
 				name: "dialogPane"
 				"border": sfield com.jgoodies.forms.factories.Borders DIALOG
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class com.jgoodies.forms.layout.FormLayout ) {
-					"$columnSpecs": "default, labelcompgap, default, labelcompgap, default, labelcompgap, default, labelcompgap, default"
-					"$rowSpecs": "default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default"
+					"$columnSpecs": "default, labelcompgap, 86dlu, labelcompgap, 23dlu, labelcompgap, default"
+					"$rowSpecs": "default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default"
 				} ) {
 					name: "contentPanel"
 					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "newUserLabel"
-						"text": "New user?"
+						name: "roleLabel"
+						"text": "Your Role"
 					}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
-						"gridX": 1
-						"gridY": 1
-					} )
-					add( new FormComponent( "javax.swing.JButton" ) {
-						name: "signUpButton"
-						"text": "Sign Up"
-						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "signUp", true ) )
-					}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
-						"gridX": 5
-					} )
-					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "loginLbl"
-						"text": "Login"
-					}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+						"gridX": 3
 						"gridY": 3
 					} )
-					add( new FormComponent( "javax.swing.JTextField" ) {
-						name: "loginField"
+					add( new FormComponent( "javax.swing.JComboBox" ) {
+						name: "roleComboBox"
 					}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+						"gridX": 3
 						"gridY": 5
 						"gridWidth": 5
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "passwordLbl"
+						name: "loginLabel"
+						"text": "Login"
+					}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+						"gridX": 3
+						"gridY": 7
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "loginField"
+					}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+						"gridX": 3
+						"gridY": 9
+						"gridWidth": 5
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "passwordLabel"
 						"text": "Password"
 					}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
-						"gridX": 1
-						"gridY": 7
+						"gridX": 3
+						"gridY": 11
 					} )
 					add( new FormComponent( "javax.swing.JPasswordField" ) {
 						name: "passwordField"
 					}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
-						"gridY": 9
-						"gridWidth": 5
-					} )
-					add( new FormComponent( "javax.swing.JButton" ) {
-						name: "submitButton"
-						"text": "Submit"
-						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "submit", true ) )
-					}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
-						"gridY": 11
+						"gridX": 3
+						"gridY": 13
 						"gridWidth": 5
 					} )
 				}, new FormLayoutConstraints( class java.lang.String ) {
 					"value": "Center"
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class com.jgoodies.forms.layout.FormLayout ) {
+					"$columnSpecs": "glue, button, relgap, button"
+					"$rowSpecs": "pref"
+				} ) {
+					name: "buttonBar"
+					"border": sfield com.jgoodies.forms.factories.Borders BUTTON_BAR_PAD
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "okButton"
+						"text": "Submit"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "completeSignUp", true ) )
+					}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+						"gridX": 4
+					} )
+				}, new FormLayoutConstraints( class java.lang.String ) {
+					"value": "South"
 				} )
 			}, new FormLayoutConstraints( class java.lang.String ) {
 				"value": "Center"
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )
-			"size": new java.awt.Dimension( 400, 300 )
+			"size": new java.awt.Dimension( 280, 300 )
 		} )
 	}
 }
