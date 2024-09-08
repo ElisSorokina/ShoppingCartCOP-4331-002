@@ -3,6 +3,7 @@ package org.example;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import org.example.service.LoginServiceImpl;
 import org.example.service.SignUpServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @SpringBootApplication
 public class ShoppingCartServer {
@@ -18,6 +21,8 @@ public class ShoppingCartServer {
     private LoginServiceImpl loginService;
     @Autowired
     private SignUpServiceImpl signUpService;
+
+    private ExecutorService serverDestroyer;
 
     @PostConstruct
     public void init()  throws IOException, InterruptedException {
@@ -28,7 +33,20 @@ public class ShoppingCartServer {
         System.out.println("Starting server...");
         server.start();
         System.out.println("Server started!");
-        server.awaitTermination();
+        serverDestroyer = Executors.newSingleThreadExecutor();
+        serverDestroyer.execute(() -> {
+            try {
+                server.awaitTermination();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        });
+
+    }
+
+    @PreDestroy
+    public void shutdown() {
+        serverDestroyer.shutdown();
     }
 
     public static void main(String[] args) throws IOException, InterruptedException {

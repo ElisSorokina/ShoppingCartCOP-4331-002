@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import org.example.grpc.Role;
 
 @Entity
-@Table(name = "user")
+@Table(name = "user", indexes = {
+        @Index(name = "unique_idx", columnList = "login", unique = true)
+})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

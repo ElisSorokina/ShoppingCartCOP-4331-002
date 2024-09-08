@@ -1,6 +1,7 @@
 package org.example.service;
 
 import io.grpc.stub.StreamObserver;
+import jakarta.transaction.Transactional;
 import org.example.data.model.User;
 import org.example.data.repository.UserRepository;
 import org.example.grpc.SignUpRequest;
@@ -16,6 +17,7 @@ public class SignUpServiceImpl extends SignUpServiceGrpc.SignUpServiceImplBase {
     private UserRepository userRepository;
 
     @Override
+    @Transactional
     public void signUp(SignUpRequest request, StreamObserver<SignUpResponse> responseObserver) {
         System.out.println("Request received from client:\n" + request);
 
@@ -26,8 +28,14 @@ public class SignUpServiceImpl extends SignUpServiceGrpc.SignUpServiceImplBase {
             user.setPassword(request.getPassword());
             user.setRole(request.getRole());
             userRepository.save(user);
+            System.out.println("User saved successfully.");
+
         } catch (Exception e) {
             responseBuilder.setErrorMsg(e.getMessage());
+
+                e.printStackTrace();  // Print the full stack trace for debugging
+                responseBuilder.setErrorMsg(e.getMessage());
+
         }
 
         responseObserver.onNext(responseBuilder.build());

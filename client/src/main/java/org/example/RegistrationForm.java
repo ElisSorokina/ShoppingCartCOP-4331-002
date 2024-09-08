@@ -7,6 +7,7 @@ import com.jgoodies.forms.factories.*;
 import com.jgoodies.forms.layout.*;
 import org.example.grpc.Role;
 import org.example.grpc.SignUpRequest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 /*
  * Created by JFormDesigner on Fri Sep 06 20:46:06 EDT 2024
  */
@@ -17,22 +18,35 @@ import org.example.grpc.SignUpRequest;
  */
 public class RegistrationForm extends JDialog {
     private MainController controller;
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public RegistrationForm(MainController controller) {
         super((Window) null);
         this.controller = controller;
         initComponents();
+        roleComboBox.addItem(null);
         roleComboBox.addItem(Role.SELLER);
         roleComboBox.addItem(Role.CUSTOMER);
 
     }
 
     private void completeSignUp(ActionEvent e) {
+        // Check if the user has selected the first item ("Please select a role")
+        if (roleComboBox.getSelectedItem() == null) {
+            // Show a message dialog to prompt the user to select a role
+            JOptionPane.showMessageDialog(this, "Please select a role from the dropdown.");
+            return;  // Exit without proceeding if no valid role is selected
+        }
+
+        // Cast the selected item to Role and proceed with sign-up
+        Role selectedRole = (Role) roleComboBox.getSelectedItem();
+
         controller.completeSignUp(SignUpRequest.newBuilder()
-                        .setLogin(loginField.getText())
-                        .setPassword(new String(passwordField.getPassword()))
-                        .setRole(Role.valueOf(roleComboBox.getSelectedItem().toString()))
+                .setLogin(loginField.getText())
+                .setPassword(passwordEncoder.encode(new String(passwordField.getPassword())))
+                .setRole(selectedRole)  // Get the enum's name as a string
                 .build());
+        dispose();
     }
 
     private void initComponents() {
