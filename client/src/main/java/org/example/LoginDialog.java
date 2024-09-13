@@ -27,7 +27,14 @@ public class LoginDialog extends JDialog {
     }
 
     private void submit(ActionEvent e) {
-        controller.login(loginField.getText(), new String(passwordField.getPassword()));
+        String sessionId = null;
+        try {
+            sessionId = controller.login(loginField.getText(), new String(passwordField.getPassword()));
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(new JFrame(), "Invalid credentials, try again", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+
     }
 
     private void initComponents() {

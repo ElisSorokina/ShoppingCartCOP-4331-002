@@ -7,7 +7,7 @@ import com.jgoodies.forms.factories.*;
 import com.jgoodies.forms.layout.*;
 import org.example.grpc.Role;
 import org.example.grpc.SignUpRequest;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 /*
  * Created by JFormDesigner on Fri Sep 06 20:46:06 EDT 2024
  */
@@ -18,7 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
  */
 public class RegistrationForm extends JDialog {
     private MainController controller;
-    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
 
     public RegistrationForm(MainController controller) {
         super((Window) null);
@@ -43,8 +43,8 @@ public class RegistrationForm extends JDialog {
 
         controller.completeSignUp(SignUpRequest.newBuilder()
                 .setLogin(loginField.getText())
-                .setPassword(passwordEncoder.encode(new String(passwordField.getPassword())))
-                .setRole(selectedRole)  // Get the enum's name as a string
+                .setPassword(new String(passwordField.getPassword()))
+                .setRole(selectedRole)
                 .build());
         dispose();
     }

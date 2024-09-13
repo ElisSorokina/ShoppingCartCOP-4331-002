@@ -5,6 +5,7 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.example.grpc.*;
 import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.PostConstruct;
