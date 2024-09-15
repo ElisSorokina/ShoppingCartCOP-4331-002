@@ -2,8 +2,10 @@ package org.example.service;
 
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
+import jakarta.transaction.Transactional;
 import org.example.data.model.User;
 import org.example.data.repository.UserRepository;
+import org.example.exceptions.FailedAuthenticationException;
 import org.example.grpc.LoginRequest;
 import org.example.grpc.LoginResponse;
 import org.example.grpc.LoginServiceGrpc;
@@ -14,19 +16,17 @@ import org.springframework.stereotype.Controller;
 import java.util.UUID;
 
 @Controller
-public class LoginServiceImpl extends LoginServiceGrpc.LoginServiceImplBase {
+public class LoginService extends LoginServiceGrpc.LoginServiceImplBase {
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
-    SessionStore sessionStore;
+    private SessionStore sessionStore;
 
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    @Override
-    public void login(LoginRequest request, StreamObserver<LoginResponse> responseObserver) {
-        System.out.println("Request received from client:\n" + request);
-
-        var user = userRepository.findByLogin(request.getLogin());
+    @Transactional
+    public LoginResponse login(LoginRequest request) {
+         var user = userRepository.findByLogin(request.getLogin());
         // Validate user credentials
         var encodedPassword = user.get().getPassword();
         var rawPassword = request.getPassword();
@@ -36,14 +36,9 @@ public class LoginServiceImpl extends LoginServiceGrpc.LoginServiceImplBase {
             sessionStore.registerSession(sessionId, request.getRole());
 
             // Send the session token back to the client
-            LoginResponse response = LoginResponse.newBuilder().setSessionId(sessionId.toString()).build();
-            responseObserver.onNext(response);
-            responseObserver.onCompleted();
-            System.out.println("Successfully authenticated:\n" + request.getLogin());
+            return LoginResponse.newBuilder().setSessionId(sessionId.toString()).build();
         } else {
-            System.err.println("Failed to authenticate:\n" + request.getLogin());
-            // Invalid credentials
-            responseObserver.onError(Status.UNAUTHENTICATED.withDescription("Invalid credentials").asRuntimeException());
+           throw new FailedAuthenticationException();
         }
 
     }

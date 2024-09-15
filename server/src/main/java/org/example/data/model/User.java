@@ -4,21 +4,22 @@ import jakarta.persistence.*;
 import org.example.grpc.Role;
 
 @Entity
-@Table(name = "user", indexes = {
-        @Index(name = "unique_idx", columnList = "login", unique = true)
-})
+@Table(
+        name = "user",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"login"})}
+)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(name = "login")
+    @Column(name = "login", nullable = false, unique = true)
     private String login;
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "role")
+    @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
 

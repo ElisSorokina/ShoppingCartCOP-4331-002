@@ -4,8 +4,8 @@ import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
-import org.example.service.LoginServiceImpl;
-import org.example.service.SignUpServiceImpl;
+import org.example.grpc.SignUpServiceGrpcImpl;
+import org.example.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,9 +18,9 @@ import java.util.concurrent.Executors;
 public class ShoppingCartServer {
 
     @Autowired
-    private LoginServiceImpl loginService;
+    private LoginService loginService;
     @Autowired
-    private SignUpServiceImpl signUpService;
+    private SignUpServiceGrpcImpl signUpService;
 
     private ExecutorService serverDestroyer;
 

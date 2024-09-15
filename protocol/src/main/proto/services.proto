@@ -14,7 +14,6 @@ message SignUpRequest {
 }
 
 message SignUpResponse {
-  string errorMsg = 1;
 }
 
 message LoginRequest {

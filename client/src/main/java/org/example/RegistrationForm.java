@@ -5,6 +5,8 @@ import java.awt.event.*;
 import javax.swing.*;
 import com.jgoodies.forms.factories.*;
 import com.jgoodies.forms.layout.*;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 import org.example.grpc.Role;
 import org.example.grpc.SignUpRequest;
 
@@ -41,11 +43,22 @@ public class RegistrationForm extends JDialog {
         // Cast the selected item to Role and proceed with sign-up
         Role selectedRole = (Role) roleComboBox.getSelectedItem();
 
-        controller.completeSignUp(SignUpRequest.newBuilder()
-                .setLogin(loginField.getText())
-                .setPassword(new String(passwordField.getPassword()))
-                .setRole(selectedRole)
-                .build());
+        try {
+            controller.completeSignUp(SignUpRequest.newBuilder()
+                    .setLogin(loginField.getText())
+                    .setPassword(new String(passwordField.getPassword()))
+                    .setRole(selectedRole)
+                    .build());
+        } catch (StatusRuntimeException ex) {
+            if(ex.getStatus() == Status.ALREADY_EXISTS) {
+                JOptionPane.showMessageDialog(new JFrame(), "This login already exists", "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(new JFrame(), "Unknown error, check logs", "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+
+        }
         dispose();
     }
 
