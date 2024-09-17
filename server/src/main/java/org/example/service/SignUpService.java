@@ -1,11 +1,9 @@
 package org.example.service;
 
-import io.grpc.stub.StreamObserver;
 import jakarta.transaction.Transactional;
 import org.example.data.model.User;
 import org.example.data.repository.UserRepository;
 import org.example.grpc.SignUpRequest;
-import org.example.grpc.SignUpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;

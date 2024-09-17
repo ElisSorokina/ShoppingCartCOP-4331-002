@@ -1,5 +1,6 @@
 package org.example.grpc;
 
+import com.google.protobuf.Empty;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import org.example.service.SignUpService;
@@ -13,10 +14,10 @@ public class SignUpServiceGrpcImpl extends SignUpServiceGrpc.SignUpServiceImplBa
     private SignUpService signUpService;
 
     @Override
-    public void signUp(SignUpRequest request, StreamObserver<SignUpResponse> responseObserver) {
+    public void signUp(SignUpRequest request, StreamObserver<Empty> responseObserver) {
         System.out.println("Request received from client:\n" + request);
 
-        SignUpResponse.Builder responseBuilder = SignUpResponse.newBuilder();
+
         try {
             signUpService.signUp(request);
             System.out.println("User saved successfully.");
@@ -29,7 +30,7 @@ public class SignUpServiceGrpcImpl extends SignUpServiceGrpc.SignUpServiceImplBa
             }
             return;
         }
-        responseObserver.onNext(responseBuilder.build());
+        responseObserver.onNext(Empty.getDefaultInstance());
         responseObserver.onCompleted();
     }
 }

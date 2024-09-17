@@ -9,6 +9,8 @@ import java.awt.event.*;
 import javax.swing.*;
 import com.jgoodies.forms.factories.*;
 import com.jgoodies.forms.layout.*;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 
 /**
  * @author MIRIN
@@ -27,14 +29,20 @@ public class LoginDialog extends JDialog {
     }
 
     private void submit(ActionEvent e) {
-        String sessionId = null;
         try {
-            sessionId = controller.login(loginField.getText(), new String(passwordField.getPassword()));
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(new JFrame(), "Invalid credentials, try again", "Error",
-                    JOptionPane.ERROR_MESSAGE);
-        }
+           controller.login(loginField.getText(), new String(passwordField.getPassword()));
+            setVisible(false);
+        } catch (StatusRuntimeException ex) {
+            if(ex.getStatus() == Status.UNAUTHENTICATED) {
+                JOptionPane.showMessageDialog(new JFrame(), "Invalid credentials, try again", "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(new JFrame(), "Unknown server error, check logs", "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
+            }
 
+        }
     }
 
     private void initComponents() {

@@ -22,6 +22,8 @@ public class MainController {
     private LoginServiceGrpc.LoginServiceBlockingStub loginServiceStub;
     private SignUpServiceGrpc.SignUpServiceBlockingStub signUpServiceStub;
     private LoginDialog loginDialog;
+    private SellerWindow sellerWindow;
+    private String sessionId;
 
     public void init() {
         ManagedChannel channel = ManagedChannelBuilder.forAddress(serverHost, serverPort)
@@ -31,17 +33,20 @@ public class MainController {
         signUpServiceStub = SignUpServiceGrpc.newBlockingStub(channel);
         loginDialog = new LoginDialog(this);
         loginDialog.setVisible(true);
+        sellerWindow = new SellerWindow();
+
     }
 
-    public String login(String userName, String password) {
+    public void login(String userName, String password) {
         LoginResponse loginResponse = loginServiceStub.login(LoginRequest.newBuilder()
                 .setLogin(userName)
                 .setPassword(password)
                 .build());
 
-        String sessionId = loginResponse.getSessionId();
+        sessionId = loginResponse.getSessionId();
         System.out.println(sessionId);
-        return sessionId;
+        sellerWindow.setVisible(true);
+
     }
 
     public void signUp() {

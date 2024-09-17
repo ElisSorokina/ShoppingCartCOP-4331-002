@@ -2,6 +2,9 @@ syntax = "proto3";
 option java_multiple_files = true;
 package org.example.grpc;
 
+import "google/protobuf/empty.proto";
+
+
 enum Role {
   SELLER = 0;
   CUSTOMER = 1;
@@ -11,9 +14,6 @@ message SignUpRequest {
   Role role = 1;
   string login = 2;
   string password = 3;
-}
-
-message SignUpResponse {
 }
 
 message LoginRequest {
@@ -26,11 +26,33 @@ message LoginResponse {
   string sessionId = 1;
 }
 
+message ItemListRequest{
+  string sessionId = 1;
+}
+
+message ItemListResponse {
+  repeated Item item = 1;
+}
+
+message Item{
+  string name = 1;
+  uint32 quantity = 2;
+  uint32 invoicePriceCents = 3;
+  uint32 sellPriceCents = 4;
+  bool deleted = 5;
+  uint64 id = 6;
+}
+
+
+
 service SignUpService {
-  rpc signUp(SignUpRequest) returns (SignUpResponse);
+  rpc signUp(SignUpRequest) returns (google.protobuf.Empty);
 }
 
 service LoginService {
   rpc login(LoginRequest) returns (LoginResponse);
 }
 
+service SellerService {
+  rpc getItemList(ItemListRequest) returns (ItemListResponse);
+}
