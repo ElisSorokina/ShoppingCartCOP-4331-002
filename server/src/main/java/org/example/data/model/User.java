@@ -3,6 +3,8 @@ package org.example.data.model;
 import jakarta.persistence.*;
 import org.example.grpc.Role;
 
+import java.util.UUID;
+
 @Entity
 @Table(
         name = "user",
@@ -11,7 +13,7 @@ import org.example.grpc.Role;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private UUID id;
 
     @Column(name = "login", nullable = false, unique = true)
     private String login;
@@ -23,11 +25,11 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    public long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

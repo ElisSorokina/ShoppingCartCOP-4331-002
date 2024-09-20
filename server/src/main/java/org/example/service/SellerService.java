@@ -1,5 +1,6 @@
 package org.example.service;
 
+import jakarta.transaction.Transactional;
 import org.example.data.model.Item;
 import org.example.data.model.User;
 import org.example.data.repository.ItemRepository;
@@ -18,6 +19,12 @@ public class SellerService {
 
     public List<Item> getItemList(UUID sessionId) {
         return itemRepository.findBySeller(sessionStore.getUser(sessionId));
+    }
+
+    @Transactional
+    public void updateItemList(List<Item> itemList, List<UUID> deletedIds) {
+        itemRepository.deleteAllById(deletedIds);
+        itemRepository.saveAll(itemList);
     }
 
 }

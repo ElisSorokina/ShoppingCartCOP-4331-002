@@ -2,6 +2,8 @@ package org.example.data.model;
 
 import jakarta.persistence.*;
 
+import java.util.UUID;
+
 
 @Entity
 @Table(
@@ -11,7 +13,7 @@ import jakarta.persistence.*;
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private UUID id;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -31,11 +33,11 @@ public class Item {
     private User seller;
 
 
-    public long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

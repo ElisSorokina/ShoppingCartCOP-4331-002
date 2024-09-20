@@ -25,12 +25,16 @@ message LoginRequest {
 message LoginResponse {
   string sessionId = 1;
 }
+message UpdateItemListRequest{
+  string sessionId = 1;
+  repeated Item item = 2;
+}
 
-message ItemListRequest{
+message GetItemListRequest{
   string sessionId = 1;
 }
 
-message ItemListResponse {
+message GetItemListResponse {
   repeated Item item = 1;
 }
 
@@ -40,7 +44,7 @@ message Item{
   uint32 invoicePriceCents = 3;
   uint32 sellPriceCents = 4;
   bool deleted = 5;
-  uint64 id = 6;
+  string id = 6;
 }
 
 
@@ -54,5 +58,6 @@ service LoginService {
 }
 
 service SellerService {
-  rpc getItemList(ItemListRequest) returns (ItemListResponse);
+  rpc getItemList(GetItemListRequest) returns (GetItemListResponse);
+  rpc updateItemList(UpdateItemListRequest) returns (google.protobuf.Empty);
 }
