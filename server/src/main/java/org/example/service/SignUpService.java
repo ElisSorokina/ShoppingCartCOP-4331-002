@@ -1,8 +1,11 @@
 package org.example.service;
 
 import jakarta.transaction.Transactional;
+import org.example.data.model.Cart;
 import org.example.data.model.User;
+import org.example.data.repository.CartRepository;
 import org.example.data.repository.UserRepository;
+import org.example.grpc.Role;
 import org.example.grpc.SignUpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -13,7 +16,8 @@ public class SignUpService {
 
     @Autowired
     private UserRepository userRepository;
-
+    @Autowired
+    private CartRepository cartRepository;
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Transactional
@@ -23,7 +27,12 @@ public class SignUpService {
         user.setLogin(request.getLogin());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(request.getRole());
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        if(request.getRole()== Role.CUSTOMER){
+            Cart cart = new Cart();
+            cart.setBuyer(savedUser);
+            cartRepository.save(cart);
+        }
     }
 
 }
