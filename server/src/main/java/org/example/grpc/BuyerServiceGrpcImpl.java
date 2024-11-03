@@ -1,24 +1,55 @@
 package org.example.grpc;
 
 import com.google.protobuf.Empty;
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
+import org.example.data.model.User;
 import org.example.service.BuyerService;
+import org.example.service.SessionStore;
+import org.example.utils.ProtoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class BuyerServiceGrpcImpl extends BuyerServiceGrpc.BuyerServiceImplBase {
+    @Autowired
+    private SessionStore sessionStore;
     @Autowired
     private BuyerService buyerService;
 
     @Override
     public void getItemList(GetItemListRequest request, StreamObserver<GetItemListResponse> responseObserver) {
-        super.getItemList(request, responseObserver);
+      var user = checkSessionId(request.getSessionId(), responseObserver);
+        if (user == null) return;
+
+        var responseBuilder = GetItemListResponse.newBuilder();
+        buyerService.getItemList()
+                .stream()
+                .map(ProtoUtils::toProto)
+                .forEach(responseBuilder::addItem);
+        responseObserver.onNext(responseBuilder.build());
+        responseObserver.onCompleted();
+    }
+
+    private User checkSessionId(String sessionIdStr, StreamObserver<?> responseObserver) {
+        var sessionId = UUID.fromString(sessionIdStr);
+        if (sessionStore.getRole(sessionId) != Role.CUSTOMER) {
+            System.err.println("This method is available for customers only");
+            responseObserver.onError(Status.PERMISSION_DENIED.withDescription("For customers only").asRuntimeException());
+            return null;
+        }
+        return sessionStore.getUser(sessionId);
     }
 
     @Override
     public void addItemToCart(AddItemRequest request, StreamObserver<Empty> responseObserver) {
-        super.addItemToCart(request, responseObserver);
+        var user = checkSessionId(request.getSessionId(), responseObserver);
+        if (user == null) return;
+        buyerService.addItem(UUID.fromString(request.getItemId()), user);
+        responseObserver.onNext(Empty.getDefaultInstance());
+        responseObserver.onCompleted();
     }
 
     @Override

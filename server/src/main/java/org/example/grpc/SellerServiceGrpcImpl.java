@@ -3,13 +3,12 @@ package org.example.grpc;
 import com.google.protobuf.Empty;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
-import org.example.data.model.Item;
 import org.example.service.SellerService;
 import org.example.service.SessionStore;
+import org.example.utils.ProtoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -28,7 +27,7 @@ public class SellerServiceGrpcImpl extends SellerServiceGrpc.SellerServiceImplBa
         var responseBuilder = GetItemListResponse.newBuilder();
         sellerService.getItemList(sessionId)
                 .stream()
-                .map(this::toProto)
+                .map(ProtoUtils::toProto)
                 .forEach(responseBuilder::addItem);
         responseObserver.onNext(responseBuilder.build());
         responseObserver.onCompleted();
@@ -50,7 +49,7 @@ public class SellerServiceGrpcImpl extends SellerServiceGrpc.SellerServiceImplBa
         if (sessionId == null) return;
         var protoItemList = request.getItemList();
         var deletedItemIds = protoItemList.stream().filter(v -> v.getDeleted()).map(v -> v.getId()).map(UUID::fromString).collect(Collectors.toList());
-        var itemList = protoItemList.stream().filter(v -> !v.getDeleted()).map(v -> toDomain(v, sessionId)).collect(Collectors.toList());
+        var itemList = protoItemList.stream().filter(v -> !v.getDeleted()).map(v -> ProtoUtils.toDomain(v, sessionId , sessionStore)).collect(Collectors.toList());
         try {
             sellerService.updateItemList(itemList, deletedItemIds);
         } catch (Exception e) {
@@ -60,32 +59,6 @@ public class SellerServiceGrpcImpl extends SellerServiceGrpc.SellerServiceImplBa
         }
         responseObserver.onNext(Empty.getDefaultInstance());
         responseObserver.onCompleted();
-    }
-
-    org.example.grpc.Item toProto(Item item) {
-        return org.example.grpc.Item.newBuilder()
-                .setId(item.getId().toString())
-                .setName(item.getName())
-                .setQuantity(item.getQuantity())
-                .setInvoicePriceCents(item.getInvoicePriceCents())
-                .setSellPriceCents(item.getSellPriceCents())
-                .build();
-    }
-
-    Item toDomain(org.example.grpc.Item protoItem, UUID sessionId) {
-        var item = new Item();
-        if(protoItem.getId() == null || protoItem.getId().isEmpty()) {
-            item.setId(UUID.randomUUID());
-        } else {
-            item.setId(UUID.fromString(protoItem.getId()));
-        }
-
-        item.setName(protoItem.getName());
-        item.setQuantity(protoItem.getQuantity());
-        item.setInvoicePriceCents(protoItem.getInvoicePriceCents());
-        item.setSellPriceCents(protoItem.getSellPriceCents());
-        item.setSeller(sessionStore.getUser(sessionId));
-        return item;
     }
 
 }

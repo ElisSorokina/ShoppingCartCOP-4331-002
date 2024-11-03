@@ -9,4 +9,5 @@ import java.util.UUID;
 
 public interface ItemRepository extends CrudRepository<Item, UUID> {
     List<Item> findBySeller(User seller);
+    List<Item> findAll();
 }

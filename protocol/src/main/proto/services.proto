@@ -48,14 +48,17 @@ message Item{
 }
 
 message AddItemRequest{
-  string itemId = 1;
+  string sessionId = 1;
+  string itemId = 2;
 }
 message UpdateCartRequest{
-  string itemId= 1;
-  uint32 itemCount = 2;
+  string sessionId = 1;
+  string itemId= 2;
+  uint32 itemCount = 3;
 }
 message DeleteItemRequest{
-  string itemId = 1;
+  string sessionId = 1;
+  string itemId = 2;
 }
 
 service SignUpService {
