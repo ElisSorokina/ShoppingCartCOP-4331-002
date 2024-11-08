@@ -7,7 +7,7 @@ import "google/protobuf/empty.proto";
 
 enum Role {
   SELLER = 0;
-  CUSTOMER = 1;
+  BUYER = 1;
 }
 
 message SignUpRequest {
@@ -53,12 +53,38 @@ message AddItemRequest{
 }
 message UpdateCartRequest{
   string sessionId = 1;
-  string itemId= 2;
+  string itemId = 2;
   uint32 itemCount = 3;
 }
 message DeleteItemRequest{
   string sessionId = 1;
   string itemId = 2;
+}
+message Card{
+  string cardNumber = 1;
+  uint32 expMonth = 2;
+  uint32 expYear = 3;
+  uint32 cvv = 4;
+  string cardHolderName = 5;
+}
+
+message PurchasedItem{
+  string itemName = 1;
+  uint32 itemCount = 2;
+  uint32 pricePerUnit = 3;
+}
+message Order{
+  string address = 1;
+  repeated PurchasedItem item = 2;
+  uint32 totalPaid = 3;
+}
+message CheckoutRequest{
+  string sessionId = 1;
+  string address = 2;
+  Card card = 3;
+}
+message CheckoutResponse{
+  Order order = 1;
 }
 
 service SignUpService {
@@ -78,4 +104,5 @@ service BuyerService {
   rpc addItemToCart(AddItemRequest) returns (google.protobuf.Empty);
   rpc updateCart(UpdateCartRequest) returns (google.protobuf.Empty);
   rpc deleteItemFromCart(DeleteItemRequest) returns (google.protobuf.Empty);
+  rpc checkout(CheckoutRequest) returns (CheckoutResponse);
 }

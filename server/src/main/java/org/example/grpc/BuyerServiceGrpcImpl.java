@@ -35,7 +35,7 @@ public class BuyerServiceGrpcImpl extends BuyerServiceGrpc.BuyerServiceImplBase 
 
     private User checkSessionId(String sessionIdStr, StreamObserver<?> responseObserver) {
         var sessionId = UUID.fromString(sessionIdStr);
-        if (sessionStore.getRole(sessionId) != Role.CUSTOMER) {
+        if (sessionStore.getRole(sessionId) != Role.BUYER) {
             System.err.println("This method is available for customers only");
             responseObserver.onError(Status.PERMISSION_DENIED.withDescription("For customers only").asRuntimeException());
             return null;
@@ -47,18 +47,35 @@ public class BuyerServiceGrpcImpl extends BuyerServiceGrpc.BuyerServiceImplBase 
     public void addItemToCart(AddItemRequest request, StreamObserver<Empty> responseObserver) {
         var user = checkSessionId(request.getSessionId(), responseObserver);
         if (user == null) return;
-        buyerService.addItem(UUID.fromString(request.getItemId()), user);
+        buyerService.addItemToCart(UUID.fromString(request.getItemId()), user);
         responseObserver.onNext(Empty.getDefaultInstance());
         responseObserver.onCompleted();
     }
 
     @Override
     public void updateCart(UpdateCartRequest request, StreamObserver<Empty> responseObserver) {
-        super.updateCart(request, responseObserver);
+        var user = checkSessionId(request.getSessionId(), responseObserver);
+        if (user == null) return;
+        buyerService.updateCart(UUID.fromString(request.getItemId()), user, request.getItemCount());
+        responseObserver.onNext(Empty.getDefaultInstance());
+        responseObserver.onCompleted();
     }
 
     @Override
     public void deleteItemFromCart(DeleteItemRequest request, StreamObserver<Empty> responseObserver) {
-        super.deleteItemFromCart(request, responseObserver);
+        var user = checkSessionId(request.getSessionId(), responseObserver);
+        if (user == null) return;
+        buyerService.deleteItemFromCart(UUID.fromString(request.getItemId()), user);
+        responseObserver.onNext(Empty.getDefaultInstance());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void checkout(CheckoutRequest request, StreamObserver<CheckoutResponse> responseObserver) {
+        var user = checkSessionId(request.getSessionId(), responseObserver);
+        if (user == null) return;
+
     }
 }
+
+

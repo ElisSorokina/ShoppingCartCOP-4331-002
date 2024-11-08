@@ -28,7 +28,7 @@ public class RegistrationForm extends JDialog {
         initComponents();
         roleComboBox.addItem(null);
         roleComboBox.addItem(Role.SELLER);
-        roleComboBox.addItem(Role.CUSTOMER);
+        roleComboBox.addItem(Role.BUYER);
 
     }
 

@@ -17,7 +17,6 @@ public class SignUpServiceGrpcImpl extends SignUpServiceGrpc.SignUpServiceImplBa
     public void signUp(SignUpRequest request, StreamObserver<Empty> responseObserver) {
         System.out.println("Request received from client:\n" + request);
 
-
         try {
             signUpService.signUp(request);
             System.out.println("User saved successfully.");

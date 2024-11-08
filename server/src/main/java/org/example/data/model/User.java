@@ -3,6 +3,7 @@ package org.example.data.model;
 import jakarta.persistence.*;
 import org.example.grpc.Role;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -55,5 +56,18 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id) && Objects.equals(login, user.login) && Objects.equals(password, user.password) && role == user.role;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, login, password, role);
     }
 }

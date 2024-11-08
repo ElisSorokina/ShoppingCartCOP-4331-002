@@ -1,18 +1,16 @@
 package org.example.service;
 
 import jakarta.transaction.Transactional;
-import org.example.data.model.Cart;
-import org.example.data.model.CartEntry;
-import org.example.data.model.Item;
-import org.example.data.model.User;
+import org.example.data.model.*;
 import org.example.data.repository.CartRepository;
 import org.example.data.repository.ItemRepository;
+import org.example.data.repository.OrderRepository;
+import org.example.grpc.Card;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class BuyerService {
@@ -22,23 +20,27 @@ public class BuyerService {
     private ItemRepository itemRepository;
     @Autowired
     private CartRepository cartRepository;
+    @Autowired
+    private PaymentService paymentService;
+    @Autowired
+    private OrderRepository orderRepository;
 
     public List<Item> getItemList() {
         return itemRepository.findAll();
     }
 
     @Transactional
-    public void addItem(UUID itemId, User user) {
+    public void addItemToCart(UUID itemId, User user) {
         var cart = cartRepository.findByBuyer(user);
         var cartEntries = cart.getCartEntries();
         var item = itemRepository.findById(itemId).get();
-        if(item.getQuantity()<1){
+        if (item.getQuantity() < 1) {
             throw new RuntimeException("Item is not available");
         }
         for (CartEntry cartEntry : cartEntries) {
             if (cartEntry.getItemId().equals(itemId)) {
                 cartEntry.setItemCount(cartEntry.getItemCount() + 1);
-                item.setQuantity(item.getQuantity()-1);
+                item.setQuantity(item.getQuantity() - 1);
                 return;
             }
         }
@@ -47,9 +49,71 @@ public class BuyerService {
         cartEntry.setCart(cart);
         cartEntry.setItemId(itemId);
         cartEntry.setItemCount(1);
-        item.setQuantity(item.getQuantity()-1);
+        item.setQuantity(item.getQuantity() - 1);
 
         cart.getCartEntries().add(cartEntry);
+    }
+
+    @Transactional
+    public void deleteItemFromCart(UUID itemId, User user) {
+        var cart = cartRepository.findByBuyer(user);
+        var cartEntries = cart.getCartEntries();
+        var item = itemRepository.findById(itemId).get();
+        for (CartEntry cartEntry : cartEntries) {
+            if (cartEntry.getItemId().equals(itemId)) {
+                cartEntries.remove(cartEntry);
+                item.setQuantity(item.getQuantity() - cartEntry.getItemCount());
+                return;
+            }
+        }
+
+    }
+
+    @Transactional
+    public void updateCart(UUID itemId, User user, int newItemCount) {
+        var cart = cartRepository.findByBuyer(user);
+        var cartEntries = cart.getCartEntries();
+        var item = itemRepository.findById(itemId).get();
+
+        for (CartEntry cartEntry : cartEntries) {
+
+            if (cartEntry.getItemId().equals(itemId)) {
+                int oldItemCount = cartEntry.getItemCount();
+                cartEntry.setItemCount(newItemCount);
+
+                item.setQuantity(item.getQuantity() + oldItemCount - newItemCount);
+                return;
+            }
+        }
+    }
+
+    @Transactional
+    public void checkout(User user, String address, Card card) {
+        var cart = cartRepository.findByBuyer(user);
+        var cartEntries = cart.getCartEntries();
+        var cartEntryByItemId = new HashMap<UUID, CartEntry>();
+        for (CartEntry cartEntry : cartEntries) {
+            cartEntryByItemId.put(cartEntry.getItemId(), cartEntry);
+        }
+        var itemIds = cartEntryByItemId.keySet();
+        var items = itemRepository.findByIdIn(itemIds);
+
+        var order = orderRepository.save(new Order());
+
+        var orderItems = new HashSet<OrderItem>();
+        var totalAmount = 0;
+        for (Item item : items) {
+            var cartEntry = cartEntryByItemId.get(item.getId());
+            var orderItem=new OrderItem();
+            orderItem.setItem(item);
+            orderItem.setOrder(order);
+            orderItem.setItemQuantity(cartEntry.getItemCount());
+            orderItems.add(orderItem);
+            totalAmount += cartEntry.getItemCount() * item.getSellPriceCents();
+        }
+        orderRepository.save(order);
+        paymentService.makePayment(card, totalAmount);
+
     }
 }
 
