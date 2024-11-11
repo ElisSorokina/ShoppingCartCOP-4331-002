@@ -7,6 +7,8 @@ import org.example.data.repository.ItemRepository;
 import org.example.data.repository.OrderRepository;
 import org.example.grpc.Card;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.jpa.JpaSystemException;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -52,6 +54,7 @@ public class BuyerService {
         item.setQuantity(item.getQuantity() - 1);
 
         cart.getCartEntries().add(cartEntry);
+        cartRepository.save(cart);
     }
 
     @Transactional

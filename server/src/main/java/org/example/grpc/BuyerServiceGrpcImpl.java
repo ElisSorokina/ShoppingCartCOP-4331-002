@@ -34,7 +34,14 @@ public class BuyerServiceGrpcImpl extends BuyerServiceGrpc.BuyerServiceImplBase 
     }
 
     private User checkSessionId(String sessionIdStr, StreamObserver<?> responseObserver) {
-        var sessionId = UUID.fromString(sessionIdStr);
+        UUID sessionId = null;
+        try {
+            sessionId = UUID.fromString(sessionIdStr);
+        } catch (Exception e) {
+            System.err.println("Invalid session id or not specified");
+            responseObserver.onError(Status.PERMISSION_DENIED.withDescription("Invalid session id").asRuntimeException());
+            return null;
+        }
         if (sessionStore.getRole(sessionId) != Role.BUYER) {
             System.err.println("This method is available for customers only");
             responseObserver.onError(Status.PERMISSION_DENIED.withDescription("For customers only").asRuntimeException());

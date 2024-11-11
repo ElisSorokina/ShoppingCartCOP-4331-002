@@ -4,6 +4,7 @@ import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+import org.example.grpc.BuyerServiceGrpcImpl;
 import org.example.grpc.LoginServiceGrpcImpl;
 import org.example.grpc.SellerServiceGrpcImpl;
 import org.example.grpc.SignUpServiceGrpcImpl;
@@ -25,6 +26,8 @@ public class ShoppingCartServer {
     private SignUpServiceGrpcImpl signUpService;
     @Autowired
     private SellerServiceGrpcImpl sellerService;
+    @Autowired
+    private BuyerServiceGrpcImpl buyerService;
 
     private ExecutorService serverDestroyer;
 
@@ -34,6 +37,7 @@ public class ShoppingCartServer {
                 .addService(loginService)
                 .addService(signUpService)
                 .addService(sellerService)
+                .addService(buyerService)
                 .build();
         System.out.println("Starting server...");
         server.start();

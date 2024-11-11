@@ -34,7 +34,14 @@ public class SellerServiceGrpcImpl extends SellerServiceGrpc.SellerServiceImplBa
     }
 
     private UUID checkSessionId(String sessionIdStr, StreamObserver<?> responseObserver) {
-        var sessionId = UUID.fromString(sessionIdStr);
+        UUID sessionId = null;
+        try {
+            sessionId = UUID.fromString(sessionIdStr);
+        } catch (Exception e) {
+            System.err.println("Invalid session id or not specified");
+            responseObserver.onError(Status.PERMISSION_DENIED.withDescription("Invalid session id").asRuntimeException());
+            return null;
+        }
         if (sessionStore.getRole(sessionId) != Role.SELLER) {
             System.err.println("This method is available for sellers only");
             responseObserver.onError(Status.PERMISSION_DENIED.withDescription("For sellers only").asRuntimeException());
