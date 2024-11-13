@@ -3,6 +3,7 @@ package org.example.grpc;
 import com.google.protobuf.Empty;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
+import org.example.data.model.Cart;
 import org.example.data.model.User;
 import org.example.service.BuyerService;
 import org.example.service.SessionStore;
@@ -30,6 +31,16 @@ public class BuyerServiceGrpcImpl extends BuyerServiceGrpc.BuyerServiceImplBase 
                 .map(ProtoUtils::toProto)
                 .forEach(responseBuilder::addItem);
         responseObserver.onNext(responseBuilder.build());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getCartItemList(GetCartItemListRequest request, StreamObserver<GetCartItemListResponse> responseObserver) {
+        var user = checkSessionId(request.getSessionId(), responseObserver);
+        if (user == null) return;
+        var cart = buyerService.getCart(user);
+
+        responseObserver.onNext(GetCartItemListResponse.newBuilder().setCart(ProtoUtils.toProto(cart)).build());
         responseObserver.onCompleted();
     }
 

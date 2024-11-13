@@ -18,7 +18,7 @@ public class Cart {
     @JoinColumn(name="buyerId", nullable=false)
     private User buyer;
 
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<CartEntry> cartEntries;
 
     public UUID getId() {

@@ -58,6 +58,11 @@ public class BuyerService {
     }
 
     @Transactional
+    public Cart getCart(User user){
+        return cartRepository.findByBuyer(user);
+    }
+
+    @Transactional
     public void deleteItemFromCart(UUID itemId, User user) {
         var cart = cartRepository.findByBuyer(user);
         var cartEntries = cart.getCartEntries();
@@ -66,9 +71,11 @@ public class BuyerService {
             if (cartEntry.getItemId().equals(itemId)) {
                 cartEntries.remove(cartEntry);
                 item.setQuantity(item.getQuantity() - cartEntry.getItemCount());
-                return;
+                break;
             }
         }
+        cartRepository.save(cart);
+        itemRepository.save(item);
 
     }
 

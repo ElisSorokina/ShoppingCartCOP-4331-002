@@ -1,6 +1,8 @@
 package org.example.utils;
 
+import org.example.data.model.CartEntry;
 import org.example.data.model.Item;
+import org.example.grpc.Cart;
 import org.example.service.SessionStore;
 
 import java.util.UUID;
@@ -34,5 +36,17 @@ public final class ProtoUtils {
         item.setSellPriceCents(protoItem.getSellPriceCents());
         item.setSeller(sessionStore.getUser(sessionId));
         return item;
+    }
+
+    public static Cart toProto(org.example.data.model.Cart domainCart){
+        var cartBuilder = Cart.newBuilder();
+        for (CartEntry cartEntry : domainCart.getCartEntries()) {
+            cartBuilder.addCartEntries(org.example.grpc.CartEntry
+                    .newBuilder()
+                    .setItemId(cartEntry.getItemId().toString())
+                    .setItemCount(cartEntry.getItemCount())
+            );
+        }
+        return cartBuilder.build();
     }
 }

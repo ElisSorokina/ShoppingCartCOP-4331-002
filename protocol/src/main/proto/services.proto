@@ -47,19 +47,39 @@ message Item{
   string id = 6;
 }
 
+message Cart{
+  repeated CartEntry cartEntries = 1;
+}
+
+message CartEntry{
+  string itemId = 1;
+  uint32 itemCount = 2;
+}
+
 message AddItemRequest{
   string sessionId = 1;
   string itemId = 2;
 }
+
+message GetCartItemListRequest{
+  string sessionId = 1;
+}
+
+message GetCartItemListResponse{
+  Cart cart = 1;
+}
+
 message UpdateCartRequest{
   string sessionId = 1;
   string itemId = 2;
   uint32 itemCount = 3;
 }
+
 message DeleteItemRequest{
   string sessionId = 1;
   string itemId = 2;
 }
+
 message Card{
   string cardNumber = 1;
   uint32 expMonth = 2;
@@ -78,11 +98,13 @@ message Order{
   repeated PurchasedItem item = 2;
   uint32 totalPaid = 3;
 }
+
 message CheckoutRequest{
   string sessionId = 1;
   string address = 2;
   Card card = 3;
 }
+
 message CheckoutResponse{
   Order order = 1;
 }
@@ -99,8 +121,10 @@ service SellerService {
   rpc getItemList(GetItemListRequest) returns (GetItemListResponse);
   rpc updateItemList(UpdateItemListRequest) returns (google.protobuf.Empty);
 }
+
 service BuyerService {
   rpc getItemList(GetItemListRequest) returns (GetItemListResponse);
+  rpc getCartItemList(GetCartItemListRequest) returns (GetCartItemListResponse);
   rpc addItemToCart(AddItemRequest) returns (google.protobuf.Empty);
   rpc updateCart(UpdateCartRequest) returns (google.protobuf.Empty);
   rpc deleteItemFromCart(DeleteItemRequest) returns (google.protobuf.Empty);

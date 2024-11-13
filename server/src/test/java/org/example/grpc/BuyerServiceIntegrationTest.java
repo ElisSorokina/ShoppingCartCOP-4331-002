@@ -1,16 +1,12 @@
 package org.example.grpc;
 
 import io.grpc.StatusRuntimeException;
-import jakarta.transaction.Transactional;
 import org.example.data.model.CartEntry;
 import org.example.data.repository.CartRepository;
-import org.example.data.repository.ItemRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionException;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -107,18 +103,30 @@ public class BuyerServiceIntegrationTest extends IntegrationTestBase{
         buyerServiceBlockingStub.addItemToCart(request2);
         Map<String, CartEntry> cartEntryByItemId = getCartEntryById();
         var itemIds = cartEntryByItemId.keySet();
-        var updatedItemList =buyerServiceBlockingStub.getItemList(GetItemListRequest.newBuilder().setSessionId(buyerSessionId).build()).getItemList();
+        List<Item> updatedItemList = getItemsList();
         assertEquals(2, cartEntryByItemId.get(itemId1).getItemCount());
         assertEquals(1, cartEntryByItemId.get(itemId2).getItemCount());
         // assert amounts left in the store. initial amount is 10 and 5
         assertEquals(8, updatedItemList.get(0).getQuantity());
         assertEquals(4, updatedItemList.get(1).getQuantity());
+
         UpdateCartRequest updateRequest = UpdateCartRequest.newBuilder().setSessionId(buyerSessionId).setItemId(itemId1).setItemCount(9).build();
-        DeleteItemRequest deleteItemRequest = DeleteItemRequest.newBuilder().setSessionId(buyerSessionId).setItemId(itemId2).build();
         buyerServiceBlockingStub.updateCart(updateRequest);
-        updatedItemList =buyerServiceBlockingStub.getItemList(GetItemListRequest.newBuilder().setSessionId(buyerSessionId).build()).getItemList();
+        updatedItemList  = getItemsList();
         assertEquals(1,updatedItemList.get(0).getQuantity());
 
+        DeleteItemRequest deleteItemRequest = DeleteItemRequest.newBuilder().setSessionId(buyerSessionId).setItemId(itemId2).build();
+        buyerServiceBlockingStub.deleteItemFromCart(deleteItemRequest);
+        var cartItemList = buyerServiceBlockingStub.getCartItemList(GetCartItemListRequest.newBuilder().setSessionId(buyerSessionId).build()).getCart().getCartEntriesList();
+        assertEquals(1, cartItemList.size());
+        assertEquals(itemId1, cartItemList.get(0).getItemId());
+
+
+    }
+
+    private List<Item> getItemsList() {
+        var updatedItemList =buyerServiceBlockingStub.getItemList(GetItemListRequest.newBuilder().setSessionId(buyerSessionId).build()).getItemList();
+        return updatedItemList;
     }
 
 
