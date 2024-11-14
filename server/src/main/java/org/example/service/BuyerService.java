@@ -7,12 +7,9 @@ import org.example.data.repository.ItemRepository;
 import org.example.data.repository.OrderRepository;
 import org.example.grpc.Card;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.jpa.JpaSystemException;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class BuyerService {
@@ -109,14 +106,12 @@ public class BuyerService {
         var items = itemRepository.findByIdIn(itemIds);
 
         var order = orderRepository.save(new Order());
-
-        var orderItems = new HashSet<OrderItem>();
+        var orderItems = order.getOrderItems();
         var totalAmount = 0;
         for (Item item : items) {
             var cartEntry = cartEntryByItemId.get(item.getId());
             var orderItem=new OrderItem();
             orderItem.setItem(item);
-            orderItem.setOrder(order);
             orderItem.setItemQuantity(cartEntry.getItemCount());
             orderItems.add(orderItem);
             totalAmount += cartEntry.getItemCount() * item.getSellPriceCents();
