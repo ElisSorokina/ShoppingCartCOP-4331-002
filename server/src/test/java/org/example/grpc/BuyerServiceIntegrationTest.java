@@ -96,11 +96,11 @@ public class BuyerServiceIntegrationTest extends IntegrationTestBase{
         List<Item> addedFromDB = addItemsToDB();
         String itemId1 = addedFromDB.get(0).getId();
         String itemId2 = addedFromDB.get(1).getId();
-        AddItemRequest request1 = AddItemRequest.newBuilder().setSessionId(buyerSessionId).setItemId(itemId1).build();
-        AddItemRequest request2 = AddItemRequest.newBuilder().setSessionId(buyerSessionId).setItemId(itemId2).build();
+        AddItemRequest request1 = AddItemRequest.newBuilder().setSessionId(buyerSessionId).addItemId(itemId1).addItemId(itemId2).build();
+
         buyerServiceBlockingStub.addItemToCart(request1);
         buyerServiceBlockingStub.addItemToCart(request1);
-        buyerServiceBlockingStub.addItemToCart(request2);
+        buyerServiceBlockingStub.addItemToCart(request1);
         Map<String, CartEntry> cartEntryByItemId = getCartEntryById();
         var itemIds = cartEntryByItemId.keySet();
         List<Item> updatedItemList = getItemsList();

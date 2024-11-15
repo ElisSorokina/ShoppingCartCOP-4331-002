@@ -23,6 +23,7 @@ message LoginRequest {
 
 message LoginResponse {
   string sessionId = 1;
+  Role role = 2;
 }
 
 message UpdateItemListRequest{
@@ -58,7 +59,7 @@ message CartEntry{
 
 message AddItemRequest{
   string sessionId = 1;
-  string itemId = 2;
+   repeated string itemId = 2;
 }
 
 message GetCartItemListRequest{

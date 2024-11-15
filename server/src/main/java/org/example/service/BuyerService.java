@@ -29,29 +29,41 @@ public class BuyerService {
     }
 
     @Transactional
-    public void addItemToCart(UUID itemId, User user) {
+    public void addItemsToCart(Set<UUID> immutableItemIds, User user) {
+        var itemIds = new HashSet<>(immutableItemIds);
         var cart = cartRepository.findByBuyer(user);
         var cartEntries = cart.getCartEntries();
-        var item = itemRepository.findById(itemId).get();
-        if (item.getQuantity() < 1) {
-            throw new RuntimeException("Item is not available");
+        var items = itemRepository.findByIdIn(itemIds);
+        var itemsById = new HashMap<UUID, Item>();
+
+        for (Item item : items) {
+            if (item.getQuantity() < 1) {
+                throw new RuntimeException("Item is not available");
+            }
+            itemsById.put(item.getId(), item);
         }
+
         for (CartEntry cartEntry : cartEntries) {
-            if (cartEntry.getItemId().equals(itemId)) {
+            if (itemIds.contains(cartEntry.getItemId())) {
                 cartEntry.setItemCount(cartEntry.getItemCount() + 1);
-                item.setQuantity(item.getQuantity() - 1);
-                return;
+                var item = itemsById.get(cartEntry.getItemId());
+                item.setQuantity(item.getQuantity()-1);
+                itemIds.remove(cartEntry.getItemId());
             }
         }
 
-        var cartEntry = new CartEntry();
-        cartEntry.setCart(cart);
-        cartEntry.setItemId(itemId);
-        cartEntry.setItemCount(1);
-        item.setQuantity(item.getQuantity() - 1);
+        for (UUID itemId : itemIds) {
+            var cartEntry = new CartEntry();
+            cartEntry.setCart(cart);
+            cartEntry.setItemId(itemId);
+            cartEntry.setItemCount(1);
+            var item = itemsById.get(itemId);
+            item.setQuantity(item.getQuantity() - 1);
+            cart.getCartEntries().add(cartEntry);
+        }
 
-        cart.getCartEntries().add(cartEntry);
         cartRepository.save(cart);
+        itemRepository.saveAll(items);
     }
 
     @Transactional

@@ -6,7 +6,6 @@ package org.example;
 
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 
 import com.jgoodies.forms.factories.*;
 import com.jgoodies.forms.layout.*;
@@ -17,7 +16,7 @@ import com.jgoodies.forms.layout.*;
 public class SellerWindow extends JFrame {
     private SellerController sellerController;
 
-    public SellerWindow(SellerController sellerController, ItemTableModel model) {
+    public SellerWindow(SellerController sellerController, SellerItemTableModel model) {
         initComponents();
         this.sellerController = sellerController;
         itemList.setModel(model);

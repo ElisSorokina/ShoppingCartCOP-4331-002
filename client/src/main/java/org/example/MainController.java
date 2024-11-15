@@ -23,7 +23,7 @@ public class MainController {
 
     private SellerController sellerController;
     private ManagedChannel channel;
-
+    private BuyerController buyerController;
     public void init() {
         channel = ManagedChannelBuilder.forAddress(serverHost, serverPort)
                 .usePlaintext()
@@ -38,6 +38,7 @@ public class MainController {
     }
 
     public void login(String userName, String password) {
+
         LoginResponse loginResponse = loginServiceStub.login(LoginRequest.newBuilder()
                 .setLogin(userName)
                 .setPassword(password)
@@ -45,8 +46,12 @@ public class MainController {
 
         String sessionId = loginResponse.getSessionId();
         System.out.println(sessionId);
-
-        sellerController = new SellerController(channel, sessionId);
+        if(loginResponse.getRole()==Role.SELLER) {
+            sellerController = new SellerController(channel, sessionId);
+        }
+        if(loginResponse.getRole()==Role.BUYER) {
+            buyerController = new BuyerController(channel, sessionId);
+        }
     }
 
     public void signUp() {

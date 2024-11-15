@@ -3,7 +3,6 @@ package org.example.grpc;
 import com.google.protobuf.Empty;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
-import org.example.data.model.Cart;
 import org.example.data.model.User;
 import org.example.service.BuyerService;
 import org.example.service.SessionStore;
@@ -12,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class BuyerServiceGrpcImpl extends BuyerServiceGrpc.BuyerServiceImplBase {
@@ -65,7 +65,9 @@ public class BuyerServiceGrpcImpl extends BuyerServiceGrpc.BuyerServiceImplBase 
     public void addItemToCart(AddItemRequest request, StreamObserver<Empty> responseObserver) {
         var user = checkSessionId(request.getSessionId(), responseObserver);
         if (user == null) return;
-        buyerService.addItemToCart(UUID.fromString(request.getItemId()), user);
+        buyerService.addItemsToCart(
+                request.getItemIdList().stream().map(UUID::fromString).collect(Collectors.toSet()),
+                user);
         responseObserver.onNext(Empty.getDefaultInstance());
         responseObserver.onCompleted();
     }

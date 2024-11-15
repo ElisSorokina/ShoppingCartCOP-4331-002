@@ -10,7 +10,7 @@ public class SellerController {
     private SellerServiceGrpc.SellerServiceBlockingStub sellerServiceStub;
     private SellerWindow sellerWindow;
     private String sessionId;
-    private ItemTableModel model;
+    private SellerItemTableModel model;
 
     public SellerController(ManagedChannel channel, String sessionId) {
         this.sessionId = sessionId;
@@ -22,7 +22,7 @@ public class SellerController {
 
     private void initTableModel() {
         var itemListRes = sellerServiceStub.getItemList(GetItemListRequest.newBuilder().setSessionId(sessionId).build());
-        model = new ItemTableModel(itemListRes.getItemList());
+        model = new SellerItemTableModel(itemListRes.getItemList());
     }
 
     public void saveItemList() {

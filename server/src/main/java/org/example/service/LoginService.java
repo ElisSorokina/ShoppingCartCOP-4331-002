@@ -38,7 +38,7 @@ public class LoginService {
                 sessionStore.registerSession(sessionId, userOpt.get());
 
                 // Send the session token back to the client
-                return LoginResponse.newBuilder().setSessionId(sessionId.toString()).build();
+                return LoginResponse.newBuilder().setSessionId(sessionId.toString()).setRole(userOpt.get().getRole()).build();
             } else {
                 throw new FailedAuthenticationException();
             }

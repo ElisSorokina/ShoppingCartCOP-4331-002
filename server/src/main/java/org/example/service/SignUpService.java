@@ -28,7 +28,7 @@ public class SignUpService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(request.getRole());
         User savedUser = userRepository.save(user);
-        if(request.getRole()== Role.BUYER){
+        if(request.getRole() == Role.BUYER){
             Cart cart = new Cart();
             cart.setBuyer(savedUser);
             cartRepository.save(cart);
