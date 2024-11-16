@@ -45,6 +45,8 @@ public final class ProtoUtils {
                     .newBuilder()
                     .setItemId(cartEntry.getItemId().toString())
                     .setItemCount(cartEntry.getItemCount())
+                    .setItemName(cartEntry.getItemName())
+                    .setSellPrice(cartEntry.getSellPrice())
             );
         }
         return cartBuilder.build();

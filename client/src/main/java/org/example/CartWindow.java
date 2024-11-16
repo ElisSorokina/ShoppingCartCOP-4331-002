@@ -10,44 +10,50 @@ import com.jgoodies.forms.layout.FormLayout;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
-import static org.example.BuyerItemTableModel.SELECT_COL;
+import static org.example.CartTableModel.DELETED_COL;
 
 /**
  * @author MIRIN
  */
-public class BuyerWindow extends JFrame {
-    private BuyerController buyerController;
+public class CartWindow extends JFrame {
+    private CartController cartController;
 
-    public BuyerWindow(BuyerController buyerController, BuyerItemTableModel model) {
+    public CartWindow(CartController cartController, CartTableModel model) {
         initComponents();
-        this.buyerController = buyerController;
+        this.cartController = cartController;
         itemList.setModel(model);
         // Set checkbox renderer and editor for the 'Deleted' column
-        itemList.getColumnModel().getColumn(SELECT_COL).setCellEditor(new DefaultCellEditor(new JCheckBox()));
-        itemList.getColumnModel().getColumn(SELECT_COL).setCellRenderer(itemList.getDefaultRenderer(Boolean.class));
+        itemList.getColumnModel().getColumn(DELETED_COL).setCellEditor(new DefaultCellEditor(new JCheckBox()));
+        itemList.getColumnModel().getColumn(DELETED_COL).setCellRenderer(itemList.getDefaultRenderer(Boolean.class));
 
     }
 
+    private void addNewItem(ActionEvent e) {
+        // TODO add your code here
+    }
 
+    private void saveItemList(ActionEvent e) {
+        // TODO add your code here
+    }
 
-
-
-    private void addToCart(ActionEvent e) {
-        buyerController.addToCart();
+    private void delete(ActionEvent e) {
+        cartController.delete();
 
     }
 
-    private void goToCart(ActionEvent e) {
-        buyerController.goToCart();
+    private void checkout(ActionEvent e) {
+        // TODO add your code here
     }
+
+
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
         // Generated using JFormDesigner Evaluation license - elizaveta sorokina
         scrollPane1 = new JScrollPane();
         itemList = new JTable();
-        addToCartButton = new JButton();
-        goToCartButton = new JButton();
+        deleteButton = new JButton();
+        checkoutButton = new JButton();
 
         //======== this ========
         var contentPane = getContentPane();
@@ -61,17 +67,21 @@ public class BuyerWindow extends JFrame {
         }
         contentPane.add(scrollPane1, CC.xywh(3, 1, 5, 1));
 
-        //---- addToCartButton ----
-        addToCartButton.setText("Add to Cart");
-        addToCartButton.addActionListener(e -> addToCart(e));
-        contentPane.add(addToCartButton, CC.xy(7, 3));
-
-        //---- goToCartButton ----
-        goToCartButton.setText("Go to Cart");
-        goToCartButton.addActionListener(e -> {
-			goToCart(e);
+        //---- deleteButton ----
+        deleteButton.setText("Delete Item(s)");
+        deleteButton.addActionListener(e -> {
+			addNewItem(e);
+			delete(e);
 		});
-        contentPane.add(goToCartButton, CC.xy(7, 5));
+        contentPane.add(deleteButton, CC.xywh(3, 3, 3, 1));
+
+        //---- checkoutButton ----
+        checkoutButton.setText("Checkout");
+        checkoutButton.addActionListener(e -> {
+			saveItemList(e);
+			checkout(e);
+		});
+        contentPane.add(checkoutButton, CC.xy(7, 3));
         pack();
         setLocationRelativeTo(getOwner());
         // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
@@ -81,7 +91,7 @@ public class BuyerWindow extends JFrame {
     // Generated using JFormDesigner Evaluation license - elizaveta sorokina
     private JScrollPane scrollPane1;
     private JTable itemList;
-    private JButton addToCartButton;
-    private JButton goToCartButton;
+    private JButton deleteButton;
+    private JButton checkoutButton;
     // JFormDesigner - End of variables declaration  //GEN-END:variables  @formatter:on
 }

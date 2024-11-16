@@ -46,7 +46,7 @@ public class BuyerItemTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return columnIndex != ID_COL; // ID is not editable
+        return columnIndex ==SELECT_COL; // ID is not editable
     }
 
     @Override

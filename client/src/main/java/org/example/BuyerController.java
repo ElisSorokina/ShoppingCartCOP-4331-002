@@ -10,6 +10,7 @@ public class BuyerController {
     private BuyerWindow buyerWindow;
     private String sessionId;
     private BuyerItemTableModel model;
+    private CartController cartController;
 
     public BuyerController(ManagedChannel channel, String sessionId) {
         this.sessionId = sessionId;
@@ -17,6 +18,7 @@ public class BuyerController {
         initTableModel();
         buyerWindow = new BuyerWindow(this, model);
         buyerWindow.setVisible(true);
+        cartController = new CartController(channel, sessionId);
     }
 
     private void initTableModel() {
@@ -37,5 +39,9 @@ public class BuyerController {
 
         buyerServiceStub.addItemToCart(addToCartReq);
         model.setItemList(buyerServiceStub.getItemList(GetItemListRequest.newBuilder().setSessionId(sessionId).build()).getItemList());
+    }
+
+    public void goToCart(){
+        cartController.openCart();
     }
 }

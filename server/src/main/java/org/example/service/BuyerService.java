@@ -49,6 +49,7 @@ public class BuyerService {
                 var item = itemsById.get(cartEntry.getItemId());
                 item.setQuantity(item.getQuantity()-1);
                 itemIds.remove(cartEntry.getItemId());
+
             }
         }
 
@@ -58,6 +59,8 @@ public class BuyerService {
             cartEntry.setItemId(itemId);
             cartEntry.setItemCount(1);
             var item = itemsById.get(itemId);
+            cartEntry.setItemName(item.getName());
+            cartEntry.setSellPrice(item.getSellPriceCents());
             item.setQuantity(item.getQuantity() - 1);
             cart.getCartEntries().add(cartEntry);
         }

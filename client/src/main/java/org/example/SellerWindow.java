@@ -10,6 +10,8 @@ import javax.swing.*;
 import com.jgoodies.forms.factories.*;
 import com.jgoodies.forms.layout.*;
 
+import static org.example.SellerItemTableModel.DELETED_COL;
+
 /**
  * @author MIRIN
  */
@@ -21,8 +23,8 @@ public class SellerWindow extends JFrame {
         this.sellerController = sellerController;
         itemList.setModel(model);
         // Set checkbox renderer and editor for the 'Deleted' column
-        itemList.getColumnModel().getColumn(5).setCellEditor(new DefaultCellEditor(new JCheckBox()));
-        itemList.getColumnModel().getColumn(5).setCellRenderer(itemList.getDefaultRenderer(Boolean.class));
+        itemList.getColumnModel().getColumn(DELETED_COL).setCellEditor(new DefaultCellEditor(new JCheckBox()));
+        itemList.getColumnModel().getColumn(DELETED_COL).setCellRenderer(itemList.getDefaultRenderer(Boolean.class));
 
     }
 
@@ -37,7 +39,7 @@ public class SellerWindow extends JFrame {
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
-        // Generated using JFormDesigner Evaluation license - Liza Sorokina
+        // Generated using JFormDesigner Evaluation license - elizaveta sorokina
         scrollPane1 = new JScrollPane();
         itemList = new JTable();
         addNewItemButton = new JButton();
@@ -70,7 +72,7 @@ public class SellerWindow extends JFrame {
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables  @formatter:off
-    // Generated using JFormDesigner Evaluation license - Liza Sorokina
+    // Generated using JFormDesigner Evaluation license - elizaveta sorokina
     private JScrollPane scrollPane1;
     private JTable itemList;
     private JButton addNewItemButton;

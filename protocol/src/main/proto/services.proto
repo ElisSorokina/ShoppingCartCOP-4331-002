@@ -55,6 +55,8 @@ message Cart{
 message CartEntry{
   string itemId = 1;
   uint32 itemCount = 2;
+  string itemName = 3;
+  uint32 sellPrice = 4;
 }
 
 message AddItemRequest{

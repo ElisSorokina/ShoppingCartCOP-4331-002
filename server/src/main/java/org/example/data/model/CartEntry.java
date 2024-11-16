@@ -17,6 +17,27 @@ public class CartEntry {
     private UUID itemId;
     @Column(name = "itemCount", nullable = false)
     private Integer itemCount;
+    @Column(name = "itemName", nullable = false)
+    private String itemName;
+    @Column(name = "sellPrice", nullable = false)
+    private Integer sellPrice;
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
+    public Integer getSellPrice() {
+        return sellPrice;
+    }
+
+    public void setSellPrice(Integer sellPrice) {
+        this.sellPrice = sellPrice;
+    }
+
     @ManyToOne
     @JoinColumn(name="cartId", nullable=false)
     private Cart cart;
