@@ -36,6 +36,9 @@ public class MainController {
 
 
     }
+    public ManagedChannel getChannel() {
+        return channel;
+    }
 
     public void login(String userName, String password) {
 

@@ -42,7 +42,7 @@ public class CartWindow extends JFrame {
     }
 
     private void checkout(ActionEvent e) {
-        // TODO add your code here
+       cartController.initiateCheckout();
     }
 
 

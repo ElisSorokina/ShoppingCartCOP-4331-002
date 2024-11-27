@@ -2,7 +2,9 @@ package org.example.utils;
 
 import org.example.data.model.CartEntry;
 import org.example.data.model.Item;
+import org.example.data.model.OrderItem;
 import org.example.grpc.Cart;
+import org.example.grpc.Order;
 import org.example.service.SessionStore;
 
 import java.util.UUID;
@@ -50,5 +52,21 @@ public final class ProtoUtils {
             );
         }
         return cartBuilder.build();
+    }
+    public static org.example.grpc.PurchasedItem toProto(OrderItem item) {
+        return org.example.grpc.PurchasedItem.newBuilder()
+                .setItemCount(item.getItemQuantity())
+                .setItemName(item.getItem().getName())
+                .setPricePerUnit(item.getItem().getSellPriceCents())
+                .build();
+
+    }
+
+    public static Order toProto(org.example.data.model.Order order){
+        var orderBuilder = Order.newBuilder();
+        for(OrderItem item: order.getOrderItems()){
+            orderBuilder.addItem(toProto(item));
+        }
+        return orderBuilder.build();
     }
 }

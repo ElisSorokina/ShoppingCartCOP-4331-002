@@ -95,6 +95,11 @@ public class BuyerServiceGrpcImpl extends BuyerServiceGrpc.BuyerServiceImplBase 
         var user = checkSessionId(request.getSessionId(), responseObserver);
         if (user == null) return;
 
+       var order =  buyerService.checkout(user, request.getAddress(), request.getCard());
+       var checkoutResponse = CheckoutResponse.newBuilder().setOrder(ProtoUtils.toProto(order)).build();
+        responseObserver.onNext(checkoutResponse);
+        responseObserver.onCompleted();
+
     }
 }
 

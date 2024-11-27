@@ -9,6 +9,7 @@ import org.example.grpc.Card;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -110,7 +111,7 @@ public class BuyerService {
     }
 
     @Transactional
-    public void checkout(User user, String address, Card card) {
+    public Order checkout(User user, String address, Card card) {
         var cart = cartRepository.findByBuyer(user);
         var cartEntries = cart.getCartEntries();
         var cartEntryByItemId = new HashMap<UUID, CartEntry>();
@@ -120,20 +121,28 @@ public class BuyerService {
         var itemIds = cartEntryByItemId.keySet();
         var items = itemRepository.findByIdIn(itemIds);
 
-        var order = orderRepository.save(new Order());
+        Order entity = new Order();
+        entity.setBuyer(user);
+        entity.setOrderDate(LocalDateTime.now());
+        var order = orderRepository.save(entity);
         var orderItems = order.getOrderItems();
         var totalAmount = 0;
         for (Item item : items) {
             var cartEntry = cartEntryByItemId.get(item.getId());
             var orderItem=new OrderItem();
             orderItem.setItem(item);
+            orderItem.setOrder(order);
             orderItem.setItemQuantity(cartEntry.getItemCount());
             orderItems.add(orderItem);
             totalAmount += cartEntry.getItemCount() * item.getSellPriceCents();
         }
-        orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
         paymentService.makePayment(card, totalAmount);
 
+        cart.getCartEntries().clear();
+        cartRepository.save(cart);
+
+        return savedOrder;
     }
 }
 
