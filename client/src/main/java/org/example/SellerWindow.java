@@ -36,6 +36,10 @@ public class SellerWindow extends JFrame {
         sellerController.addNewItem();
     }
 
+    private void report(ActionEvent e) {
+        sellerController.showProfitReport();
+    }
+
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
@@ -44,6 +48,7 @@ public class SellerWindow extends JFrame {
         itemList = new JTable();
         addNewItemButton = new JButton();
         saveButton = new JButton();
+        reportButton = new JButton();
 
         //======== this ========
         var contentPane = getContentPane();
@@ -66,6 +71,11 @@ public class SellerWindow extends JFrame {
         saveButton.setText("Save");
         saveButton.addActionListener(e -> saveItemList(e));
         contentPane.add(saveButton, CC.xy(7, 3));
+
+        //---- reportButton ----
+        reportButton.setText("Profit Report");
+        reportButton.addActionListener(e -> report(e));
+        contentPane.add(reportButton, CC.xywh(3, 5, 3, 1));
         pack();
         setLocationRelativeTo(getOwner());
         // JFormDesigner - End of component initialization  //GEN-END:initComponents  @formatter:on
@@ -77,5 +87,6 @@ public class SellerWindow extends JFrame {
     private JTable itemList;
     private JButton addNewItemButton;
     private JButton saveButton;
+    private JButton reportButton;
     // JFormDesigner - End of variables declaration  //GEN-END:variables  @formatter:on
 }

@@ -39,4 +39,9 @@ public class SellerController {
     public void addNewItem() {
         model.addRow(Item.getDefaultInstance());
     }
+
+    public void showProfitReport() {
+        ProfitReportWindow reportWindow = new ProfitReportWindow(sellerServiceStub, sessionId);
+        reportWindow.setVisible(true);
+    }
 }

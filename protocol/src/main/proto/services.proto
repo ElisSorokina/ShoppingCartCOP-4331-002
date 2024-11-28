@@ -112,6 +112,20 @@ message CheckoutResponse{
   Order order = 1;
 }
 
+message ItemProfit {
+  string itemName = 1;
+  int32 profit = 2; // Profit in cents
+}
+
+message GetProfitReportRequest {
+  string sessionId = 1;
+}
+
+message GetProfitReportResponse {
+  int32 totalProfit = 1; // Total profit in cents
+  repeated ItemProfit itemProfits = 2; // Profit for each item
+}
+
 service SignUpService {
   rpc signUp(SignUpRequest) returns (google.protobuf.Empty);
 }
@@ -123,6 +137,7 @@ service LoginService {
 service SellerService {
   rpc getItemList(GetItemListRequest) returns (GetItemListResponse);
   rpc updateItemList(UpdateItemListRequest) returns (google.protobuf.Empty);
+  rpc GetProfitReport(GetProfitReportRequest) returns (GetProfitReportResponse);
 }
 
 service BuyerService {

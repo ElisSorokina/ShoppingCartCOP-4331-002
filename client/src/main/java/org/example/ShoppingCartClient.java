@@ -5,7 +5,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
 import java.awt.*;
-
+/**
+ * The main entry point for the shoppding cart server application.
+ * Initializes and starts the gRPC server.
+ */
 @SpringBootApplication
 public class ShoppingCartClient {
 

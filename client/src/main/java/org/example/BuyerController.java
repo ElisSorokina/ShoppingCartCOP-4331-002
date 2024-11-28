@@ -3,6 +3,8 @@ package org.example;
 import io.grpc.ManagedChannel;
 import org.example.grpc.*;
 
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import java.util.List;
 
 public class BuyerController {

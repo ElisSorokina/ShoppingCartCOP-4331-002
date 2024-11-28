@@ -68,4 +68,19 @@ public class SellerServiceGrpcImpl extends SellerServiceGrpc.SellerServiceImplBa
         responseObserver.onCompleted();
     }
 
+    @Override
+    public void getProfitReport(GetProfitReportRequest request, StreamObserver<GetProfitReportResponse> responseObserver) {
+        // Validate session
+        var sessionId = checkSessionId(request.getSessionId(), responseObserver);
+        if (sessionId == null) return;
+
+        try {
+            responseObserver.onNext(sellerService.getProfitReport(sessionId));
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseObserver.onError(Status.INTERNAL.withDescription("Unable to fetch profit report").asRuntimeException());
+        }
+    }
+
 }

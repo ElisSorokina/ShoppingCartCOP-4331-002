@@ -3,6 +3,7 @@ package org.example.grpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.example.data.repository.ItemRepository;
+import org.example.data.repository.OrderItemRepository;
 import org.example.data.repository.UserRepository;
 import org.example.service.SessionStore;
 import org.junit.jupiter.api.AfterEach;
@@ -40,6 +41,8 @@ public class IntegrationTestBase {
     protected ItemRepository itemRepository;
     @Autowired
     protected SessionStore sessionStore;
+    @Autowired
+    protected OrderItemRepository orderItemRepository;
 
     protected SignUpRequest signUpRequestSeller;
     protected SignUpRequest signUpRequestBuyer;
