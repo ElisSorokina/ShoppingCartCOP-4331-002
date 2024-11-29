@@ -17,6 +17,10 @@ import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Main server class for the shopping cart application.
+ * Initializes and starts the gRPC server to handle incoming client requests.
+ */
 @SpringBootApplication
 public class ShoppingCartServer {
 
@@ -31,6 +35,11 @@ public class ShoppingCartServer {
 
     private ExecutorService serverDestroyer;
 
+    /**
+     * Starts the gRPC server on the specified port.
+     *
+     * @throws IOException if an I/O error occurs when starting the server.
+     */
     @PostConstruct
     public void init()  throws IOException, InterruptedException {
         Server server = ServerBuilder.forPort(8081)

@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.*;
 
+/**
+ * Service class for managing buyer-related operations.
+ */
 @Service
 public class BuyerService {
 
@@ -25,16 +28,27 @@ public class BuyerService {
     @Autowired
     private OrderRepository orderRepository;
 
+    /**
+     * Retrieves the list of all available items.
+     *
+     * @return a list of items available for purchase.
+     */
     public List<Item> getItemList() {
         return itemRepository.findAll();
     }
 
+    /**
+     * Adds items to the buyer's cart.
+     *
+     * @param itemIds the set of item IDs to add to the cart.
+     * @param buyer the buyer who owns the cart.
+     */
     @Transactional
-    public void addItemsToCart(Set<UUID> immutableItemIds, User user) {
-        var itemIds = new HashSet<>(immutableItemIds);
-        var cart = cartRepository.findByBuyer(user);
+    public void addItemsToCart(Set<UUID> itemIds, User buyer) {
+        var itemIdsLocal = new HashSet<>(itemIds);
+        var cart = cartRepository.findByBuyer(buyer);
         var cartEntries = cart.getCartEntries();
-        var items = itemRepository.findByIdIn(itemIds);
+        var items = itemRepository.findByIdIn(itemIdsLocal);
         var itemsById = new HashMap<UUID, Item>();
 
         for (Item item : items) {
@@ -45,16 +59,15 @@ public class BuyerService {
         }
 
         for (CartEntry cartEntry : cartEntries) {
-            if (itemIds.contains(cartEntry.getItemId())) {
+            if (itemIdsLocal.contains(cartEntry.getItemId())) {
                 cartEntry.setItemCount(cartEntry.getItemCount() + 1);
                 var item = itemsById.get(cartEntry.getItemId());
                 item.setQuantity(item.getQuantity()-1);
-                itemIds.remove(cartEntry.getItemId());
-
+                itemIdsLocal.remove(cartEntry.getItemId());
             }
         }
 
-        for (UUID itemId : itemIds) {
+        for (UUID itemId : itemIdsLocal) {
             var cartEntry = new CartEntry();
             cartEntry.setCart(cart);
             cartEntry.setItemId(itemId);
@@ -70,14 +83,26 @@ public class BuyerService {
         itemRepository.saveAll(items);
     }
 
+    /**
+     * Retrieves the buyer's shopping cart.
+     *
+     * @param buyer the buyer whose cart is to be retrieved.
+     * @return the cart associated with the specified buyer.
+     */
     @Transactional
-    public Cart getCart(User user){
-        return cartRepository.findByBuyer(user);
+    public Cart getCart(User buyer){
+        return cartRepository.findByBuyer(buyer);
     }
 
+    /**
+     * Deletes an item from the buyer's cart.
+     *
+     * @param itemId the ID of the item to delete.
+     * @param buyer the buyer who owns the cart.
+     */
     @Transactional
-    public void deleteItemFromCart(UUID itemId, User user) {
-        var cart = cartRepository.findByBuyer(user);
+    public void deleteItemFromCart(UUID itemId, User buyer) {
+        var cart = cartRepository.findByBuyer(buyer);
         var cartEntries = cart.getCartEntries();
         var item = itemRepository.findById(itemId).get();
         for (CartEntry cartEntry : cartEntries) {
@@ -92,9 +117,16 @@ public class BuyerService {
 
     }
 
+    /**
+     * Updates the quantity of a specific item in the buyer's cart.
+     *
+     * @param itemId the ID of the item to update.
+     * @param buyer the buyer who owns the cart.
+     * @param newItemCount the new quantity of the item.
+     */
     @Transactional
-    public void updateCart(UUID itemId, User user, int newItemCount) {
-        var cart = cartRepository.findByBuyer(user);
+    public void updateCart(UUID itemId, User buyer, int newItemCount) {
+        var cart = cartRepository.findByBuyer(buyer);
         var cartEntries = cart.getCartEntries();
         var item = itemRepository.findById(itemId).get();
 
@@ -110,9 +142,18 @@ public class BuyerService {
         }
     }
 
+
+    /**
+     * Handles the checkout process for the buyer's cart.
+     *
+     * @param buyer the buyer who is checking out.
+     * @param address the shipping address for the order.
+     * @param card the payment card details.
+     * @return the order created after successful checkout.
+     */
     @Transactional
-    public Order checkout(User user, String address, Card card) {
-        var cart = cartRepository.findByBuyer(user);
+    public Order checkout(User buyer, String address, Card card) {
+        var cart = cartRepository.findByBuyer(buyer);
         var cartEntries = cart.getCartEntries();
         var cartEntryByItemId = new HashMap<UUID, CartEntry>();
         for (CartEntry cartEntry : cartEntries) {
@@ -122,7 +163,7 @@ public class BuyerService {
         var items = itemRepository.findByIdIn(itemIds);
 
         Order entity = new Order();
-        entity.setBuyer(user);
+        entity.setBuyer(buyer);
         entity.setOrderDate(LocalDateTime.now());
         var order = orderRepository.save(entity);
         var orderItems = order.getOrderItems();

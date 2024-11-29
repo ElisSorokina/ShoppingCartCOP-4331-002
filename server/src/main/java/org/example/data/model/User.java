@@ -6,26 +6,42 @@ import org.example.grpc.Role;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Represents a user in the system.
+ */
 @Entity
 @Table(
         name = "user",
         uniqueConstraints = {@UniqueConstraint(columnNames = {"login"})}
 )
 public class User {
+    /**
+     * Unique identifier for the user.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    /**
+     * The login name of the user.
+     */
     @Column(name = "login", nullable = false, unique = true)
     private String login;
 
+    /**
+     * The password of the user.
+     */
     @Column(name = "password", nullable = false)
     private String password;
 
+    /**
+     * The role of the user (e.g., buyer or seller).
+     */
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    // Getters and setters
     public UUID getId() {
         return id;
     }
@@ -56,18 +72,5 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(login, user.login) && Objects.equals(password, user.password) && role == user.role;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, login, password, role);
     }
 }

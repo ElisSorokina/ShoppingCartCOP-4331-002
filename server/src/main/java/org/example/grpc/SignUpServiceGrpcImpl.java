@@ -7,12 +7,21 @@ import org.example.service.SignUpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * gRPC implementation for handling user sign-up operations.
+ */
 @Service
 public class SignUpServiceGrpcImpl extends SignUpServiceGrpc.SignUpServiceImplBase {
 
     @Autowired
     private SignUpService signUpService;
 
+    /**
+     * Handles user sign-up requests.
+     *
+     * @param request the sign-up request containing user details.
+     * @param responseObserver the response observer to confirm the sign-up.
+     */
     @Override
     public void signUp(SignUpRequest request, StreamObserver<Empty> responseObserver) {
         System.out.println("Request received from client:\n" + request);

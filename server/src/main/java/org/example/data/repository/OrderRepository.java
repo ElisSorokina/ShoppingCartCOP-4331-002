@@ -9,7 +9,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Repository interface for accessing Order entities from the database.
+ */
 public interface OrderRepository extends CrudRepository<Order, UUID> {
-
-
 }

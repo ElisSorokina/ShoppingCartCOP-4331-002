@@ -10,7 +10,9 @@ import org.example.grpc.SignUpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
+/**
+ * Service class for managing user sign-up operations.
+ */
 @Service
 public class SignUpService {
 
@@ -19,7 +21,12 @@ public class SignUpService {
     @Autowired
     private CartRepository cartRepository;
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
+    /**
+     * Handles user sign-up by saving user details in the database.
+     *
+     * @param request the sign-up request containing user information.
+     * @throws Exception if an error occurs while saving the user details.
+     */
     @Transactional
     public void signUp(SignUpRequest request) {
         System.out.println("Request received from client:\n" + request);

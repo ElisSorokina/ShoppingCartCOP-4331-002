@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Service class for managing seller-related operations.
+ */
 @Service
 public class SellerService {
     @Autowired
@@ -22,16 +25,35 @@ public class SellerService {
     @Autowired
     private OrderItemRepository orderItemRepository;
 
+    /**
+     * Retrieves the list of items for the specified seller.
+     *
+     * @param sellerId the ID of the seller whose items are to be retrieved.
+     * @return a list of items associated with the specified seller.
+     */
     public List<Item> getItemList(UUID sessionId) {
         return itemRepository.findBySeller(sessionStore.getUser(sessionId));
     }
 
+    /**
+     * Updates the list of items for the seller.
+     *
+     * @param items the list of items to be updated.
+     * @param deletedIds the list of item IDs to be deleted.
+     * @throws Exception if the update operation fails.
+     */
     @Transactional
     public void updateItemList(List<Item> itemList, List<UUID> deletedIds) {
         itemRepository.deleteAllById(deletedIds);
         itemRepository.saveAll(itemList);
     }
 
+    /**
+     * Retrieves the profit report for the seller.
+     *
+     * @param sessionId the ID of seller's session whose profit report is to be retrieved.
+     * @return the profit report for the specified seller.
+     */
     @Transactional
     public GetProfitReportResponse getProfitReport(UUID sessionId) {
         var seller = sessionStore.getUser(sessionId);

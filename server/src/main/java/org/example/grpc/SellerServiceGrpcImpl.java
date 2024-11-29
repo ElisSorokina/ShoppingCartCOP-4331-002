@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * gRPC implementation for handling seller-related operations.
+ */
 @Service
 public class SellerServiceGrpcImpl extends SellerServiceGrpc.SellerServiceImplBase {
     @Autowired
@@ -19,6 +22,12 @@ public class SellerServiceGrpcImpl extends SellerServiceGrpc.SellerServiceImplBa
     @Autowired
     private SessionStore sessionStore;
 
+    /**
+     * Retrieves the list of items for the seller.
+     *
+     * @param request the request to get the item list.
+     * @param responseObserver the response observer to send the item list.
+     */
     @Override
     public void getItemList(GetItemListRequest request, StreamObserver<GetItemListResponse> responseObserver) {
         var sessionId = checkSessionId(request.getSessionId(), responseObserver);
@@ -33,23 +42,12 @@ public class SellerServiceGrpcImpl extends SellerServiceGrpc.SellerServiceImplBa
         responseObserver.onCompleted();
     }
 
-    private UUID checkSessionId(String sessionIdStr, StreamObserver<?> responseObserver) {
-        UUID sessionId = null;
-        try {
-            sessionId = UUID.fromString(sessionIdStr);
-        } catch (Exception e) {
-            System.err.println("Invalid session id or not specified");
-            responseObserver.onError(Status.PERMISSION_DENIED.withDescription("Invalid session id").asRuntimeException());
-            return null;
-        }
-        if (sessionStore.getRole(sessionId) != Role.SELLER) {
-            System.err.println("This method is available for sellers only");
-            responseObserver.onError(Status.PERMISSION_DENIED.withDescription("For sellers only").asRuntimeException());
-            return null;
-        }
-        return sessionId;
-    }
-
+    /**
+     * Updates the seller's item list.
+     *
+     * @param request the request containing updated item details.
+     * @param responseObserver the response observer to confirm the update.
+     */
     @Override
     public void updateItemList(UpdateItemListRequest request, StreamObserver<Empty> responseObserver) {
         var sessionId = checkSessionId(request.getSessionId(), responseObserver);
@@ -68,6 +66,12 @@ public class SellerServiceGrpcImpl extends SellerServiceGrpc.SellerServiceImplBa
         responseObserver.onCompleted();
     }
 
+    /**
+     * Retrieves the profit report for the seller.
+     *
+     * @param request the request to get the profit report.
+     * @param responseObserver the response observer to send the profit report.
+     */
     @Override
     public void getProfitReport(GetProfitReportRequest request, StreamObserver<GetProfitReportResponse> responseObserver) {
         // Validate session
@@ -81,6 +85,30 @@ public class SellerServiceGrpcImpl extends SellerServiceGrpc.SellerServiceImplBa
             e.printStackTrace();
             responseObserver.onError(Status.INTERNAL.withDescription("Unable to fetch profit report").asRuntimeException());
         }
+    }
+
+    /**
+     * Validates the session ID and ensures the user has the role of SELLER.
+     *
+     * @param sessionIdStr the session ID to be validated.
+     * @param responseObserver the response observer to handle error cases.
+     * @return the session ID if valid, otherwise null.
+     */
+    private UUID checkSessionId(String sessionIdStr, StreamObserver<?> responseObserver) {
+        UUID sessionId = null;
+        try {
+            sessionId = UUID.fromString(sessionIdStr);
+        } catch (Exception e) {
+            System.err.println("Invalid session id or not specified");
+            responseObserver.onError(Status.PERMISSION_DENIED.withDescription("Invalid session id").asRuntimeException());
+            return null;
+        }
+        if (sessionStore.getRole(sessionId) != Role.SELLER) {
+            System.err.println("This method is available for sellers only");
+            responseObserver.onError(Status.PERMISSION_DENIED.withDescription("For sellers only").asRuntimeException());
+            return null;
+        }
+        return sessionId;
     }
 
 }

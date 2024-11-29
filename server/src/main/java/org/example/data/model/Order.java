@@ -6,27 +6,45 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * Represents an order placed by a buyer.
+ */
 @Entity
 @Table(name = "orders")
 public class Order {
-
+    /**
+     * Unique identifier for the order.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    /**
+     * The set of items included in the order.
+     */
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<OrderItem> orderItems = new HashSet<>();
+    private Set<OrderItem> orderItems;
 
+    /**
+     * The user who placed the order.
+     */
     @ManyToOne
     @JoinColumn(name = "buyer_id", nullable = false)
     private User buyer;
 
+    /**
+     * The total amount for the order in cents.
+     */
     @Column(name = "total_amount", nullable = false)
-    private int totalAmount; // Store in cents to avoid floating-point issues
+    private int totalAmount;
 
+    /**
+     * The date and time when the order was placed.
+     */
     @Column(name = "order_date", nullable = false)
     private LocalDateTime orderDate;
 
+    // Getters and setters
     public UUID getId() {
         return id;
     }

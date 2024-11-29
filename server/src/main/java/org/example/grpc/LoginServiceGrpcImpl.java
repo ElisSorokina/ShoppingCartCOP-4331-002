@@ -7,12 +7,21 @@ import org.example.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * gRPC implementation for handling login operations.
+ */
 @Service
 public class LoginServiceGrpcImpl extends LoginServiceGrpc.LoginServiceImplBase {
 
     @Autowired
     private LoginService loginService;
 
+    /**
+     * Handles user login requests.
+     *
+     * @param request the login request containing user credentials.
+     * @param responseObserver the response observer to return the login response.
+     */
     @Override
     public void login(LoginRequest request, StreamObserver<LoginResponse> responseObserver) {
         System.out.println("Request received from client:\n" + request);

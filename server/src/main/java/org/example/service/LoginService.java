@@ -16,6 +16,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+/**
+ * Service class for handling user login operations.
+ */
 @Service
 public class LoginService {
     @Autowired
@@ -25,6 +28,13 @@ public class LoginService {
 
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
+    /**
+     * Handles user login by validating credentials and generating a session ID.
+     *
+     * @param request the login request containing user credentials.
+     * @return the login response containing the session ID.
+     * @throws FailedAuthenticationException if the login credentials are invalid.
+     */
     @Transactional
     public LoginResponse login(LoginRequest request) {
         var userOpt = userRepository.findByLogin(request.getLogin());
