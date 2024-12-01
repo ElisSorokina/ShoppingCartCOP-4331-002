@@ -162,22 +162,23 @@ public class BuyerService {
         var itemIds = cartEntryByItemId.keySet();
         var items = itemRepository.findByIdIn(itemIds);
 
-        Order entity = new Order();
-        entity.setBuyer(buyer);
-        entity.setOrderDate(LocalDateTime.now());
-        var order = orderRepository.save(entity);
-        var orderItems = order.getOrderItems();
+        Order newOrder = new Order();
+        newOrder.setBuyer(buyer);
+        newOrder.setOrderDate(LocalDateTime.now());
+        newOrder.setOrderItems(new HashSet<>());
+        var orderFromDb = orderRepository.save(newOrder);
+        var orderItems = orderFromDb.getOrderItems();
         var totalAmount = 0;
         for (Item item : items) {
             var cartEntry = cartEntryByItemId.get(item.getId());
             var orderItem=new OrderItem();
             orderItem.setItem(item);
-            orderItem.setOrder(order);
+            orderItem.setOrder(orderFromDb);
             orderItem.setItemQuantity(cartEntry.getItemCount());
             orderItems.add(orderItem);
             totalAmount += cartEntry.getItemCount() * item.getSellPriceCents();
         }
-        Order savedOrder = orderRepository.save(order);
+        Order savedOrder = orderRepository.save(orderFromDb);
         paymentService.makePayment(card, totalAmount);
 
         cart.getCartEntries().clear();
